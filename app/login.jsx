@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useRef, useState } from "react";
 import ScreenWrapper from "../components/ScreenWrapper";
 import { theme } from "../constants/theme";
@@ -8,14 +8,22 @@ import BackButton from "../components/BackButton";
 import { useRouter } from "expo-router";
 import { hp, wp } from "../helpers/common";
 import Input from "../components/Input";
+import Button from "../components/Button";
 
 const Login = () => {
   const router = useRouter();
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [loading, setLoading] = useState(false);
+
+  const onSumbit = async () => {
+    if(!emailRef.current || !passwordRef.current){
+        Alert.alert("Iniciar Sesión", "Por favor, rellena todos los campos");
+        return;
+    }
+  };
   return (
-    <ScreenWrapper>
+    <ScreenWrapper bg="white">
       <StatusBar style="dark" />
       <View style={styles.container}>
         <BackButton router={router} />
@@ -28,13 +36,33 @@ const Login = () => {
 
         {/* form */}
         <View style={styles.form}>
-            <Text style={{fontSize: hp(1.5), color: theme.colors.text}}>Inicia Sesión para continuar</Text>
-            <Input 
-                icon={<Icon name="mail" size={26} strokeWidth={1.6}/>}
-                placeholder="Escribe tu correo"
-                onChangeText={value=> emailRef.current = value}
-            />
+          <Text style={{ fontSize: hp(1.5), color: theme.colors.text }}>
+            Inicia Sesión para continuar
+          </Text>
+          <Input
+            icon={<Icon name="mail" size={26} strokeWidth={1.6} />}
+            placeholder="Escribe tu correo"
+            onChangeText={(value) => (emailRef.current = value)}
+          />
+          <Input
+            icon={<Icon name="lock" size={26} strokeWidth={1.6} />}
+            placeholder="Escribe tu contraseña"
+            secureTextEntry
+            onChangeText={(value) => (passwordRef.current = value)}
+          />
+          <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+          {/* button */}
+          <Button loading={loading} onPress={onSumbit} title="Iniciar Sesión" />
         </View>
+
+        {/* footer */}
+        <View style={styles.footer}>
+            <Text style={styles.footerText}>¿No tienes una cuenta?</Text>
+            <Pressable onPress={() => router.push("signUp")}>
+              <Text style={[styles.footerText, {color: theme.colors.primaryDark, fontWeight: theme.fonts.semibold}]}>Registrate</Text>
+            </Pressable>
+        </View>
+          
       </View>
     </ScreenWrapper>
   );
